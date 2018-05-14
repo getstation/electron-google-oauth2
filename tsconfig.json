@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "experimentalDecorators": true,
-    "removeComments": false,
+    "allowJs": false,
+    "declaration": true,
     "preserveConstEnums": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
@@ -11,20 +10,18 @@
     "noUnusedLocals": true,
     "noImplicitThis": true,
     "noUnusedParameters": true,
-    "inlineSourceMap": true,
-    "inlineSources": true,
-    "importHelpers": true,
     "noEmitHelpers": true,
     "module": "commonjs",
+    "moduleResolution": "node",
     "target": "es2016",
+    "outDir": "./lib",
     "jsx": "react",
-    "baseUrl": ".",
     "lib": [
       "es2017",
       "dom"
     ]
   },
   "include": [
-    "index.ts"
+    "src/index.ts"
   ]
 }

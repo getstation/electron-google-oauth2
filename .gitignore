@@ -1,5 +1,5 @@
 node_modules
-
-/.idea
+/.idea/
 /index.js
 yarn-error.log
+/lib/

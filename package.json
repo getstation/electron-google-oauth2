@@ -1,9 +1,11 @@
 {
   "name": "@getstation/electron-google-oauth2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Google OAuth2 module for your Electron app.",
   "license": "MIT",
   "repository": "getstation/electron-google-oauth2",
+  "main": "./lib/index",
+  "types": "./lib/index",
   "author": {
     "name": "Joël Charles",
     "email": "joel@getstation.com"
@@ -30,8 +32,6 @@
   "engines": {
     "node": ">= 8.0"
   },
-  "main": "./index",
-  "types": "./index",
   "bugs": {
     "url": "https://github.com/getstation/electron-google-oauth2/issues"
   },
