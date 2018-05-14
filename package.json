@@ -1,6 +1,6 @@
 {
   "name": "@getstation/electron-google-oauth2",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Google OAuth2 module for your Electron app.",
   "license": "MIT",
   "repository": "getstation/electron-google-oauth2",
@@ -26,8 +26,7 @@
   },
   "dependencies": {
     "google-auth-library": "^1.4.0",
-    "googleapis": "^30.0.0",
-    "node-fetch": "^2.1.2"
+    "googleapis": "^30.0.0"
   },
   "engines": {
     "node": ">= 8.0"
