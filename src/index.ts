@@ -117,6 +117,19 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
           closeWin();
         }
       });
+
+      win.on('page-title-updated', () => {
+        setImmediate(() => {
+          const title = win.getTitle();
+          if (title.startsWith('Denied')) {
+            reject(new Error(title.split(/[ =]/)[2]));
+            closeWin();
+          } else if (title.startsWith('Success')) {
+            resolve(title.split(/[ =]/)[2]);
+            closeWin();
+          }
+        });
+      });
     });
   }
 

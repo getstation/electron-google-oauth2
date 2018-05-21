@@ -1,6 +1,6 @@
 {
   "name": "@getstation/electron-google-oauth2",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "A Google OAuth2 module for your Electron app.",
   "license": "MIT",
   "repository": "getstation/electron-google-oauth2",
