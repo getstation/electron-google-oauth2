@@ -107,7 +107,7 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
         });
       }
 
-      win.webContents.on('did-get-redirect-request', (_event, _oldUrl, newUrl) => {
+      win.webContents.on('did-navigate', (_event, newUrl) => {
         const parsed = url.parse(newUrl, true);
         if (parsed.query.error) {
           reject(new Error(parsed.query.error_description as string));
