@@ -1,11 +1,13 @@
 // inspired by https://github.com/parro-it/electron-google-oauth
-import { BrowserWindow } from 'electron';
+import { remote, BrowserWindow } from 'electron';
 import { EventEmitter } from 'events';
 import { OAuth2Client } from 'google-auth-library';
 import { Credentials } from 'google-auth-library/build/src/auth/credentials';
 import { google } from 'googleapis';
 import { stringify } from 'querystring';
 import * as url from 'url';
+
+const BW: typeof BrowserWindow = process.type === 'renderer' ? remote.BrowserWindow : BrowserWindow;
 
 export class UserClosedWindowError extends Error {
   constructor() {
@@ -89,7 +91,7 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
    */
   openAuthWindowAndGetAuthorizationCode(urlParam: string) {
     return new Promise<string>((resolve, reject) => {
-      const win = new BrowserWindow({
+      const win = new BW({
         useContentSize: true,
         fullscreen: false,
       });
