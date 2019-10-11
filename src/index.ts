@@ -1,13 +1,17 @@
 // inspired by https://github.com/parro-it/electron-google-oauth
-import { remote, BrowserWindow } from 'electron';
+import { shell } from 'electron';
 import { EventEmitter } from 'events';
 import { OAuth2Client } from 'google-auth-library';
 import { Credentials } from 'google-auth-library/build/src/auth/credentials';
 import { google } from 'googleapis';
 import { stringify } from 'querystring';
 import * as url from 'url';
+import LoopbackRedirectServer from './LoopbackRedirectServer';
 
-const BW: typeof BrowserWindow = process.type === 'renderer' ? remote.BrowserWindow : BrowserWindow;
+// const BW: typeof BrowserWindow = process.type === 'renderer' ? remote.BrowserWindow : BrowserWindow;
+
+// can't be randomozed
+const LOOPBACK_INTERFACE_REDIRECTION_PORT = 42813;
 
 export class UserClosedWindowError extends Error {
   constructor() {
@@ -31,15 +35,16 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
 
   public oauth2Client: OAuth2Client;
   public scopes: string[];
+  protected server: LoopbackRedirectServer | null;
 
   /**
    * Create a new instance of ElectronGoogleOAuth2
    * @param {string} clientId - Google Client ID
    * @param {string} clientSecret - Google Client Secret
    * @param {string[]} scopes - Google scopes. 'profile' and 'email' will always be present
-   * @param {string} redirectUri - defaults to 'urn:ietf:wg:oauth:2.0:oob'
+   * @param {string} redirectUri 
    */
-  constructor(clientId: string, clientSecret: string, scopes: string[], redirectUri: string = 'urn:ietf:wg:oauth:2.0:oob') {
+  constructor(clientId: string, clientSecret: string, scopes: string[], redirectUri: string = `http://127.0.0.1:${LOOPBACK_INTERFACE_REDIRECTION_PORT}/callback`) {
     super();
     // Force fetching id_token if not provided
     if (!scopes.includes('profile')) scopes.push('profile');
@@ -64,6 +69,7 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
     let url = this.oauth2Client.generateAuthUrl({
       access_type: 'offline', // 'online' (default) or 'offline' (gets refresh_token)
       scope: this.scopes,
+      redirect_uri: `http://127.0.0.1:${LOOPBACK_INTERFACE_REDIRECTION_PORT}/callback`
     });
 
     if (forceAddSession) {
@@ -90,51 +96,39 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
    * @returns {Promise<string>}
    */
   openAuthWindowAndGetAuthorizationCode(urlParam: string) {
-    return new Promise<string>((resolve, reject) => {
-      const win = new BW({
-        useContentSize: true,
-        fullscreen: false,
-      });
-
-      win.loadURL(urlParam);
-
-      win.on('closed', () => {
-        reject(new UserClosedWindowError());
-      });
-
-      function closeWin() {
-        win.removeAllListeners('closed');
-        setImmediate( () => {
-          win.close();
-        });
-      }
-
-      win.webContents.on('did-navigate', (_event, newUrl) => {
-        const parsed = url.parse(newUrl, true);
-        if (parsed.query.error) {
-          reject(new Error(parsed.query.error_description as string));
-          closeWin();
-        } else if (parsed.query.code) {
-          resolve(parsed.query.code as string);
-          closeWin();
-        }
-      });
-
-      win.on('page-title-updated', () => {
-        setImmediate(() => {
-          const title = win.getTitle();
-          if (title.startsWith('Denied')) {
-            reject(new Error(title.split(/[ =]/)[2]));
-            closeWin();
-          } else if (title.startsWith('Success')) {
-            resolve(title.split(/[ =]/)[2]);
-            closeWin();
-          }
-        });
-      });
-    });
+    return this.openAuthPageAndGetAuthorizationCode(urlParam);
   }
 
+  async openAuthPageAndGetAuthorizationCode(urlParam: string) {
+    if (this.server) {
+      // if a server is already running, we close it so that we free the port
+      // and restart the process
+      await this.server.close();
+      this.server = null;
+    }
+    this.server = new LoopbackRedirectServer({
+      port: LOOPBACK_INTERFACE_REDIRECTION_PORT,
+      callbackPath: '/callback',
+      successRedirectURL: 'https://getstation.com/app-login-success/',
+    });
+
+    shell.openExternal(urlParam);
+
+    const reachedCallbackURL = await this.server.waitForRedirection();
+
+    // waitForRedirection will close the server
+    this.server = null;
+
+    const parsed = url.parse(reachedCallbackURL, true);
+    if (parsed.query.error) {
+      throw new Error(parsed.query.error_description as string);
+    } else if (!parsed.query.code) {
+      throw new Error('Unknown' as string);
+    }
+    
+    return parsed.query.code as string
+  }
+  
   /**
    * Get Google tokens for given scopes
    * @param {boolean} forceAddSession
