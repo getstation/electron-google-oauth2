@@ -1,5 +1,5 @@
 // inspired by https://github.com/parro-it/electron-google-oauth
-import { shell } from 'electron';
+import { shell, BrowserWindow, remote } from 'electron';
 import { EventEmitter } from 'events';
 import { OAuth2Client } from 'google-auth-library';
 import { Credentials } from 'google-auth-library/build/src/auth/credentials';
@@ -8,7 +8,7 @@ import { stringify } from 'querystring';
 import * as url from 'url';
 import LoopbackRedirectServer from './LoopbackRedirectServer';
 
-// const BW: typeof BrowserWindow = process.type === 'renderer' ? remote.BrowserWindow : BrowserWindow;
+const BW: typeof BrowserWindow = process.type === 'renderer' ? remote.BrowserWindow : BrowserWindow;
 
 // can't be randomozed
 const LOOPBACK_INTERFACE_REDIRECTION_PORT = 42813;
@@ -36,24 +36,31 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
   public oauth2Client: OAuth2Client;
   public scopes: string[];
   protected server: LoopbackRedirectServer | null;
+  protected successRedirectURL: string;
 
   /**
    * Create a new instance of ElectronGoogleOAuth2
    * @param {string} clientId - Google Client ID
    * @param {string} clientSecret - Google Client Secret
    * @param {string[]} scopes - Google scopes. 'profile' and 'email' will always be present
-   * @param {string} redirectUri 
+   * @param {string} successRedirectURL
    */
-  constructor(clientId: string, clientSecret: string, scopes: string[], redirectUri: string = `http://127.0.0.1:${LOOPBACK_INTERFACE_REDIRECTION_PORT}/callback`) {
+  constructor(
+    clientId: string,
+    clientSecret: string,
+    scopes: string[],
+    successRedirectURL: string = 'https://getstation.com/app-login-success/'
+  ) {
     super();
     // Force fetching id_token if not provided
     if (!scopes.includes('profile')) scopes.push('profile');
     if (!scopes.includes('email')) scopes.push('email');
     this.scopes = scopes;
+    this.successRedirectURL = successRedirectURL;
     this.oauth2Client = new google.auth.OAuth2(
       clientId,
       clientSecret,
-      redirectUri
+      `http://127.0.0.1:${LOOPBACK_INTERFACE_REDIRECTION_PORT}/callback`
     );
     this.oauth2Client.on('tokens', (tokens) => {
       this.emit('tokens', tokens);
@@ -109,7 +116,7 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
     this.server = new LoopbackRedirectServer({
       port: LOOPBACK_INTERFACE_REDIRECTION_PORT,
       callbackPath: '/callback',
-      successRedirectURL: 'https://getstation.com/app-login-success/',
+      successRedirectURL: this.successRedirectURL,
     });
 
     shell.openExternal(urlParam);
@@ -125,6 +132,9 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
     } else if (!parsed.query.code) {
       throw new Error('Unknown' as string);
     }
+
+    // refocus on the window
+    BW.getAllWindows().filter(w => w.isVisible()).forEach(w => w.show());
     
     return parsed.query.code as string
   }
