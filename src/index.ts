@@ -10,7 +10,7 @@ import LoopbackRedirectServer from './LoopbackRedirectServer';
 
 const BW: typeof BrowserWindow = process.type === 'renderer' ? remote.BrowserWindow : BrowserWindow;
 
-// can't be randomozed
+// can't be randomized
 const LOOPBACK_INTERFACE_REDIRECTION_PORT = 42813;
 
 export class UserClosedWindowError extends Error {
