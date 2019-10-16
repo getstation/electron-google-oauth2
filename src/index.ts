@@ -10,9 +10,6 @@ import LoopbackRedirectServer from './LoopbackRedirectServer';
 
 const BW: typeof BrowserWindow = process.type === 'renderer' ? remote.BrowserWindow : BrowserWindow;
 
-// can't be randomized
-const LOOPBACK_INTERFACE_REDIRECTION_PORT = 42813;
-
 export class UserClosedWindowError extends Error {
   constructor() {
     super('User closed the window');
@@ -26,6 +23,19 @@ export class UserClosedWindowError extends Error {
  * @type {Credentials}
  */
 
+export type ElectronGoogleOAuth2Options = {
+  successRedirectURL: string,
+  loopbackInterfaceRedirectionPort: number,
+  refocusAfterSuccess: boolean,
+};
+
+export const defaultElectronGoogleOAuth2Options: ElectronGoogleOAuth2Options = {
+  successRedirectURL: 'https://getstation.com/app-login-success/',
+  // can't be randomized
+  loopbackInterfaceRedirectionPort: 42813,
+  refocusAfterSuccess: true,
+};
+
 /**
  * Handle Google Auth processes through Electron.
  * This class automatically renews expired tokens.
@@ -36,7 +46,7 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
   public oauth2Client: OAuth2Client;
   public scopes: string[];
   protected server: LoopbackRedirectServer | null;
-  protected successRedirectURL: string;
+  protected options: ElectronGoogleOAuth2Options;
 
   /**
    * Create a new instance of ElectronGoogleOAuth2
@@ -49,18 +59,18 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
     clientId: string,
     clientSecret: string,
     scopes: string[],
-    successRedirectURL: string = 'https://getstation.com/app-login-success/'
+    options: Partial<ElectronGoogleOAuth2Options> = defaultElectronGoogleOAuth2Options,
   ) {
     super();
     // Force fetching id_token if not provided
     if (!scopes.includes('profile')) scopes.push('profile');
     if (!scopes.includes('email')) scopes.push('email');
     this.scopes = scopes;
-    this.successRedirectURL = successRedirectURL;
+    this.options = { ...defaultElectronGoogleOAuth2Options, ...options };
     this.oauth2Client = new google.auth.OAuth2(
       clientId,
       clientSecret,
-      `http://127.0.0.1:${LOOPBACK_INTERFACE_REDIRECTION_PORT}/callback`
+      `http://127.0.0.1:${this.options.loopbackInterfaceRedirectionPort}/callback`
     );
     this.oauth2Client.on('tokens', (tokens) => {
       this.emit('tokens', tokens);
@@ -76,7 +86,7 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
     let url = this.oauth2Client.generateAuthUrl({
       access_type: 'offline', // 'online' (default) or 'offline' (gets refresh_token)
       scope: this.scopes,
-      redirect_uri: `http://127.0.0.1:${LOOPBACK_INTERFACE_REDIRECTION_PORT}/callback`
+      redirect_uri: `http://127.0.0.1:${this.options.loopbackInterfaceRedirectionPort}/callback`
     });
 
     if (forceAddSession) {
@@ -114,9 +124,9 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
       this.server = null;
     }
     this.server = new LoopbackRedirectServer({
-      port: LOOPBACK_INTERFACE_REDIRECTION_PORT,
+      port: this.options.loopbackInterfaceRedirectionPort,
       callbackPath: '/callback',
-      successRedirectURL: this.successRedirectURL,
+      successRedirectURL: this.options.successRedirectURL,
     });
 
     shell.openExternal(urlParam);
@@ -133,8 +143,10 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
       throw new Error('Unknown');
     }
 
-    // refocus on the window
-    BW.getAllWindows().filter(w => w.isVisible()).forEach(w => w.show());
+    if (this.options.refocusAfterSuccess) {
+      // refocus on the window
+      BW.getAllWindows().filter(w => w.isVisible()).forEach(w => w.show());
+    }
     
     return parsed.query.code as string
   }
