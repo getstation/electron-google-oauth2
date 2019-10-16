@@ -130,7 +130,7 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
     if (parsed.query.error) {
       throw new Error(parsed.query.error_description as string);
     } else if (!parsed.query.code) {
-      throw new Error('Unknown' as string);
+      throw new Error('Unknown');
     }
 
     // refocus on the window
