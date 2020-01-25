@@ -31,7 +31,6 @@ app.on('ready', () => {
 
 ### Refresh Token
 ```typescript
-```typescript
 import ElectronGoogleOAuth2 from '@getstation/electron-google-oauth2';
 
 app.on('ready', () => {
@@ -53,7 +52,6 @@ app.on('ready', () => {
       });
   }
 });
-```
 ```
 
 ## License
