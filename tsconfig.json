@@ -10,7 +10,7 @@
     "noUnusedLocals": true,
     "noImplicitThis": true,
     "noUnusedParameters": true,
-    "noEmitHelpers": true,
+    "noEmitHelpers": false,
     "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2016",
