@@ -3,7 +3,6 @@ import { shell, BrowserWindow, remote } from 'electron';
 import { EventEmitter } from 'events';
 import { OAuth2Client } from 'google-auth-library';
 import { Credentials } from 'google-auth-library/build/src/auth/credentials';
-import { google } from 'googleapis';
 import { stringify } from 'querystring';
 import * as url from 'url';
 import LoopbackRedirectServer from './LoopbackRedirectServer';
@@ -67,7 +66,7 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
     if (!scopes.includes('email')) scopes.push('email');
     this.scopes = scopes;
     this.options = { ...defaultElectronGoogleOAuth2Options, ...options };
-    this.oauth2Client = new google.auth.OAuth2(
+    this.oauth2Client = new OAuth2Client(
       clientId,
       clientSecret,
       `http://127.0.0.1:${this.options.loopbackInterfaceRedirectionPort}/callback`
@@ -147,10 +146,10 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
       // refocus on the window
       BW.getAllWindows().filter(w => w.isVisible()).forEach(w => w.show());
     }
-    
+
     return parsed.query.code as string
   }
-  
+
   /**
    * Get Google tokens for given scopes
    * @param {boolean} forceAddSession

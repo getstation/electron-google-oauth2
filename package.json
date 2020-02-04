@@ -21,12 +21,11 @@
     "access token"
   ],
   "devDependencies": {
-    "electron": "^2.0.0",
-    "typescript": "^2.8.3"
+    "electron": "^7.1.11",
+    "typescript": "^3.7.5"
   },
   "dependencies": {
-    "google-auth-library": "^1.4.0",
-    "googleapis": "^30.0.0"
+    "google-auth-library": "^5.9.2"
   },
   "engines": {
     "node": ">= 8.0"
