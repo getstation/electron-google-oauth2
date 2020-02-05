@@ -52,7 +52,7 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
    * @param {string} clientId - Google Client ID
    * @param {string} clientSecret - Google Client Secret
    * @param {string[]} scopes - Google scopes. 'profile' and 'email' will always be present
-   * @param {string} successRedirectURL
+   * @param {Partial<ElectronGoogleOAuth2Options>} options
    */
   constructor(
     clientId: string,
