@@ -54,5 +54,12 @@ app.on('ready', () => {
 });
 ```
 
+### Requires with plain JavaScript
+
+```js
+const ElectronGoogleOAuth2 = require('@getstation/electron-google-oauth2').default;
+new ElectronGoogleOAuth2(CLIENT_ID, CLIENT_SECRET, SCOPES_LIST);
+```
+
 ## License
 MIT
