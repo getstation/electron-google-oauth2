@@ -1,5 +1,5 @@
 // inspired by https://github.com/parro-it/electron-google-oauth
-import { shell, BrowserWindow, remote } from 'electron';
+import { BrowserWindow, remote, shell } from 'electron';
 import { EventEmitter } from 'events';
 import { OAuth2Client } from 'google-auth-library';
 import { Credentials } from 'google-auth-library/build/src/auth/credentials';
@@ -40,7 +40,7 @@ export const defaultElectronGoogleOAuth2Options: ElectronGoogleOAuth2Options = {
  * This class automatically renews expired tokens.
  * @fires ElectronGoogleOAuth2#tokens
  */
-export default class ElectronGoogleOAuth2 extends EventEmitter {
+class ElectronGoogleOAuth2 extends EventEmitter {
 
   public oauth2Client: OAuth2Client;
   public scopes: string[];
@@ -172,3 +172,9 @@ export default class ElectronGoogleOAuth2 extends EventEmitter {
     this.oauth2Client.setCredentials(tokens);
   }
 }
+
+declare interface ElectronGoogleOAuth2 {
+  on(event: 'tokens', listener: (tokens: Credentials) => void): this;
+}
+
+export default ElectronGoogleOAuth2
