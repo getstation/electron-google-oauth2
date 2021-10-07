@@ -54,6 +54,16 @@ app.on('ready', () => {
 });
 ```
 
+### Use custom successRedirectURL
+```js
+const myApiOauth = new ElectronGoogleOAuth2(
+  'CLIENT_ID',
+  'CLIENT_SECRET',
+  ['https://www.googleapis.com/auth/drive.metadata.readonly']
+  { successRedirectURL: 'https://google.com' },
+);
+```
+
 ### Requires with plain JavaScript
 
 ```js
