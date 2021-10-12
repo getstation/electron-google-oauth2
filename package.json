@@ -21,7 +21,7 @@
     "access token"
   ],
   "devDependencies": {
-    "electron": "^7.1.11",
+    "electron": "^11.5.0",
     "typescript": "^3.7.5"
   },
   "dependencies": {
