@@ -43,7 +43,7 @@ app.on('ready', () => {
   const refreshToken = \\ Read the saved refresh token
   
   if(refreshToken) {
-    myApiOauth.SetTokens({ refresh_token: refreshToken });
+    myApiOauth.setTokens({ refresh_token: refreshToken });
   } else {
     myApiOauth.openAuthWindowAndGetTokens()
       .then(token => {
