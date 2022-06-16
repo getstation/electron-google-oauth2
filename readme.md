@@ -43,7 +43,7 @@ app.on('ready', () => {
   const refreshToken = \\ Read the saved refresh token
   
   if(refreshToken) {
-    myApiOauth.SetTokens({ refresh_token: refreshToken });
+    myApiOauth.setTokens({ refresh_token: refreshToken });
   } else {
     myApiOauth.openAuthWindowAndGetTokens()
       .then(token => {
@@ -52,6 +52,16 @@ app.on('ready', () => {
       });
   }
 });
+```
+
+### Use custom successRedirectURL
+```js
+const myApiOauth = new ElectronGoogleOAuth2(
+  'CLIENT_ID',
+  'CLIENT_SECRET',
+  ['https://www.googleapis.com/auth/drive.metadata.readonly']
+  { successRedirectURL: 'https://google.com' },
+);
 ```
 
 ### Requires with plain JavaScript
