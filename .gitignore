@@ -2,4 +2,3 @@ node_modules
 /.idea/
 /index.js
 yarn-error.log
-/lib/
