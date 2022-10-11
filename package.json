@@ -25,6 +25,7 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
+    "@electron/remote": "^2.0.8",
     "google-auth-library": "^5.9.2"
   },
   "engines": {

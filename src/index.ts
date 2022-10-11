@@ -1,5 +1,5 @@
 // inspired by https://github.com/parro-it/electron-google-oauth
-import { BrowserWindow, remote, shell } from 'electron';
+import { BrowserWindow, shell } from 'electron';
 import { EventEmitter } from 'events';
 import { OAuth2Client } from 'google-auth-library';
 import { Credentials } from 'google-auth-library/build/src/auth/credentials';
@@ -7,7 +7,8 @@ import { stringify } from 'querystring';
 import * as url from 'url';
 import LoopbackRedirectServer from './LoopbackRedirectServer';
 
-const BW: typeof BrowserWindow = process.type === 'renderer' ? remote.BrowserWindow : BrowserWindow;
+const BW: typeof BrowserWindow = process.type === 'renderer' ?
+  require('@electron/remote').BrowserWindow : BrowserWindow;
 
 export class UserClosedWindowError extends Error {
   constructor() {
