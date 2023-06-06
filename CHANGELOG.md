@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.0.0] - 2022-06-16
+### Fixed
+- The `remote` module has been removed in Electron 14 (#1).
+
 ## [2.1.0] - 2020-02-04
 ### Changed
 - Upgrade all dependencies

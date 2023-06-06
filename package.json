@@ -1,6 +1,6 @@
 {
   "name": "@getstation/electron-google-oauth2",
-  "version": "2.1.0",
+  "version": "14.0.0",
   "description": "A Google OAuth2 module for your Electron app.",
   "license": "MIT",
   "repository": "getstation/electron-google-oauth2",
@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "tsc -p .",
-    "prepublishOnly": "yarn run build"
+    "prepublishOnly": "pnpm run build"
   },
   "keywords": [
     "electron",
@@ -21,14 +21,15 @@
     "access token"
   ],
   "devDependencies": {
-    "electron": "^7.1.11",
-    "typescript": "^3.7.5"
+    "@electron/remote": "^2.0.10",
+    "electron": "^14.0.0",
+    "typescript": "^3.9.10"
   },
   "dependencies": {
-    "google-auth-library": "^5.9.2"
+    "google-auth-library": "^8.8.0"
   },
   "engines": {
-    "node": ">= 8.0"
+    "node": ">=14.0"
   },
   "bugs": {
     "url": "https://github.com/getstation/electron-google-oauth2/issues"
