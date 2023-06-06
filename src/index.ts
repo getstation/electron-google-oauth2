@@ -186,6 +186,16 @@ class ElectronGoogleOAuth2 extends EventEmitter {
   setTokens(tokens: Credentials) {
     this.oauth2Client.setCredentials(tokens);
   }
+
+  /**
+   * Ensure that the server has been closed.
+   */
+  async dispose() {
+    if (this.server) {
+      await this.server.close();
+      this.server = null;
+    }
+  }
 }
 
 declare interface ElectronGoogleOAuth2 {
