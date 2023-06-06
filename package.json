@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "tsc -p .",
-    "prepublishOnly": "yarn run build"
+    "prepublishOnly": "pnpm run build"
   },
   "keywords": [
     "electron",
