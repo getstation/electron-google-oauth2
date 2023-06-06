@@ -4,8 +4,8 @@
   "description": "A Google OAuth2 module for your Electron app.",
   "license": "MIT",
   "repository": "getstation/electron-google-oauth2",
-  "main": "./lib/index",
-  "types": "./lib/index",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "author": {
     "name": "Joël Charles",
     "email": "joel@getstation.com"
