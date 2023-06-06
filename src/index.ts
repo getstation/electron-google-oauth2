@@ -29,7 +29,7 @@ export type ElectronGoogleOAuth2Options = {
 };
 
 export const defaultElectronGoogleOAuth2Options: ElectronGoogleOAuth2Options = {
-  successRedirectURL: 'https://getstation.com/app-login-success/',
+  successRedirectURL: 'https://127.0.0.1/',
   // can't be randomized
   loopbackInterfaceRedirectionPort: 42813,
   refocusAfterSuccess: true,
