@@ -21,15 +21,15 @@
     "access token"
   ],
   "devDependencies": {
-    "@electron/remote": "^2.0.8",
+    "@electron/remote": "^2.0.10",
     "electron": "^14.0.0",
     "typescript": "^3.9.10"
   },
   "dependencies": {
-    "google-auth-library": "^8.0.2"
+    "google-auth-library": "^8.8.0"
   },
   "engines": {
-    "node": ">= 8.0"
+    "node": ">=14.0"
   },
   "bugs": {
     "url": "https://github.com/getstation/electron-google-oauth2/issues"
